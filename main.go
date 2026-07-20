@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
 	"github.com/paveldroo/huffman-compress/counter"
+	"github.com/paveldroo/huffman-compress/tree"
 )
 
 func main() {
@@ -22,5 +22,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println(chars)
+	_ = tree.Tree(chars)
+
+	// fmt.Println(tree)
+
 }

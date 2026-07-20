@@ -18,6 +18,7 @@ func CharsCount(fname string) (map[string]int, error) {
 		_, ok := res[str]
 		if !ok {
 			res[str] = 1
+
 			continue
 		}
 		res[str]++

@@ -1,7 +1,7 @@
 package tree
 
 import (
-	"sort"
+	"slices"
 )
 
 type Node struct {
@@ -13,11 +13,12 @@ type Node struct {
 
 func Tree(charsCount map[string]int) Node {
 	nodes := nodesList(charsCount)
+
 	return buildTree(nodes)
 }
 
 func nodesList(charsCount map[string]int) []Node {
-	res := []Node{}
+	res := make([]Node, 0, len(charsCount))
 	for ch, cnt := range charsCount {
 		n := Node{
 			value:     ch,
@@ -56,8 +57,13 @@ func buildTree(nodes []Node) Node {
 }
 
 func sortNodes(nodes []Node) []Node {
-	sort.Slice(nodes, func(i, j int) bool {
-		return nodes[i].frequency < nodes[j].frequency
+	slices.SortFunc(nodes, func(a, b Node) int {
+		if a.frequency < b.frequency {
+			return -1
+		}
+
+		return 1
 	})
+
 	return nodes
 }

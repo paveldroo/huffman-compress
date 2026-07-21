@@ -8,3 +8,6 @@ tasks:
     - golangci-lint fmt
     - golangci-lint run --enable-only tagalign,whitespace,nlreturn --fix
     - golangci-lint run
+
+  test:
+    - go test ./... -v

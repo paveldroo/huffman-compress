@@ -58,6 +58,10 @@ func buildTree(nodes []Node) Node {
 
 func sortNodes(nodes []Node) []Node {
 	slices.SortFunc(nodes, func(a, b Node) int {
+		if a.Frequency == b.Frequency && a.Value < b.Value {
+			return -1
+		}
+
 		if a.Frequency < b.Frequency {
 			return -1
 		}

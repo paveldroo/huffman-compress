@@ -7,6 +7,7 @@ import (
 )
 
 func TestTree(t *testing.T) {
+	t.Parallel()
 	charsCount := map[string]int{
 		"C": 32,
 		"D": 42,
@@ -98,7 +99,6 @@ func TestTree(t *testing.T) {
 	if !treesEqual(&want, &root) {
 		t.Fatal("trees are not equal")
 	}
-
 }
 
 func treesEqual(root1, root2 *tree.Node) bool {
@@ -106,8 +106,7 @@ func treesEqual(root1, root2 *tree.Node) bool {
 		return true
 	}
 
-	// fmt.Printf("node1.value: %s, node1.freq: %d\nnode2.value: %s, node2.freq: %d\n", root1.Value, root1.Frequency, root2.Value, root2.Frequency)
-	if !(root1 != nil && root2 != nil) || root1.Value != root2.Value || root1.Frequency != root2.Frequency {
+	if root1 == nil || root2 == nil || root1.Value != root2.Value || root1.Frequency != root2.Frequency {
 		return false
 	}
 

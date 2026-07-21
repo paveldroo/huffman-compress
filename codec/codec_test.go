@@ -1,15 +1,15 @@
 package codec_test
 
 import (
-	"testing"
-
 	"maps"
+	"testing"
 
 	"github.com/paveldroo/huffman-compress/codec"
 	"github.com/paveldroo/huffman-compress/tree"
 )
 
 func TestCharsCodes(t *testing.T) {
+	t.Parallel()
 	charsCount := map[string]int{
 		"C": 32,
 		"D": 42,

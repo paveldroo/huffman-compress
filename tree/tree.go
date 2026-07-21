@@ -5,8 +5,8 @@ import (
 )
 
 type Node struct {
-	value     string
-	frequency int
+	Value     string
+	Frequency int
 	Left      *Node
 	Right     *Node
 }
@@ -21,8 +21,8 @@ func nodesList(charsCount map[string]int) []Node {
 	res := make([]Node, 0, len(charsCount))
 	for ch, cnt := range charsCount {
 		n := Node{
-			value:     ch,
-			frequency: cnt,
+			Value:     ch,
+			Frequency: cnt,
 			Left:      nil,
 			Right:     nil,
 		}
@@ -43,8 +43,8 @@ func buildTree(nodes []Node) Node {
 		nodes = nodes[2:]
 
 		node := Node{
-			value:     "",
-			frequency: node1.frequency + node2.frequency,
+			Value:     "",
+			Frequency: node1.Frequency + node2.Frequency,
 			Left:      &node1,
 			Right:     &node2,
 		}
@@ -58,7 +58,7 @@ func buildTree(nodes []Node) Node {
 
 func sortNodes(nodes []Node) []Node {
 	slices.SortFunc(nodes, func(a, b Node) int {
-		if a.frequency < b.frequency {
+		if a.Frequency < b.Frequency {
 			return -1
 		}
 

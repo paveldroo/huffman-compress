@@ -14,22 +14,24 @@ var (
 	charsMap  = make(map[string]string) //nolint:gochecknoglobals // need global for algo
 )
 
-func Encode(header []byte, data []byte, charsTable map[string]string) ([]byte, error) {
+func Encode(header string, data []byte, charsTable map[string]string) ([]byte, error) {
 	buf := bytes.Buffer{}
-	buf.Write(header)
+	buf.WriteString(header)
 	for _, char := range string(data) {
 		code, ok := charsTable[string(char)]
 		if !ok {
 			return nil, fmt.Errorf("%w: %s", errNoCode, string(char))
 		}
-		bytesToWrite, err := ConvertToBytes(code)
-		if err != nil {
-			return nil, fmt.Errorf("convert code to bytes: %w", err)
-		}
-		buf.Write(bytesToWrite)
+
+		buf.WriteString(code)
 	}
 
-	return buf.Bytes(), nil
+	res, err := ConvertToBytes(buf.String())
+	if err != nil {
+		return nil, fmt.Errorf("convert all data to bytes: %w", err)
+	}
+
+	return res, nil
 }
 
 func ConvertToBytes(bitStr string) ([]byte, error) {

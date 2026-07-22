@@ -4,7 +4,10 @@ import (
 	"log"
 	"os"
 
+	"github.com/paveldroo/huffman-compress/codec"
 	"github.com/paveldroo/huffman-compress/counter"
+	"github.com/paveldroo/huffman-compress/header"
+	"github.com/paveldroo/huffman-compress/reader"
 	"github.com/paveldroo/huffman-compress/tree"
 )
 
@@ -17,12 +20,26 @@ func main() {
 	}
 	fname := args[1]
 
-	chars, err := counter.CharsCount(fname)
+	data, err := reader.FileData(fname)
+	if err != nil {
+		log.Fatal("get filedata: %w", err)
+	}
+
+	chars, err := counter.CharsCount(data)
 	if err != nil {
 		log.Fatalf("can't count chars: %s", err.Error()) //nolint:gosec // no injection
 	}
 
-	_ = tree.Tree(chars)
+	t := tree.Tree(chars)
+	charsTable := codec.CharsCodes(&t)
+	h := header.Header(charsTable)
+	encodedFileData, err := codec.Encode(h, data, charsTable)
+	if err != nil {
+		log.Fatalf("encoding failed: %s", err.Error()) //nolint:gosec
+	}
 
-	// fmt.Println(tree)
+	err = os.WriteFile("result", encodedFileData, 0o600) //nolint:gosec,mnd
+	if err != nil {
+		log.Fatalf("write file: %s", err.Error()) //nolint:gosec
+	}
 }

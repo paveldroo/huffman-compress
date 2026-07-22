@@ -20,7 +20,10 @@ func TestHeader(t *testing.T) {
 	want := make([]byte, header.LenBytes, header.LenBytes+len(flat))
 	binary.BigEndian.PutUint32(want, uint32(len(flat))) //nolint:gosec // i'm pretty sure
 	want = append(want, []byte(flat)...)
-	h := header.Header(charsTable)
+	h, err := header.Header(charsTable)
+	if err != nil {
+		t.Fatalf("compose header: %s", err.Error())
+	}
 
 	if !slices.Equal(want, h) {
 		t.Fatalf("not equal, want: %v, header: %v\n", want, h)

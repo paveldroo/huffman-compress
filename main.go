@@ -32,7 +32,10 @@ func main() {
 
 	t := tree.Tree(chars)
 	charsTable := codec.CharsCodes(&t)
-	h := header.Header(charsTable)
+	h, err := header.Header(charsTable)
+	if err != nil {
+		log.Fatalf("compose header: %s", err.Error())
+	}
 	encodedFileData, err := codec.Encode(h, data, charsTable)
 	if err != nil {
 		log.Fatalf("encoding failed: %s", err.Error()) //nolint:gosec

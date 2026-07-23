@@ -1,6 +1,6 @@
 package counter
 
-func CharsCount(fileData []byte) (map[string]int, error) {
+func CharsCount(fileData []byte) map[string]int {
 	res := map[string]int{}
 
 	for _, ch := range string(fileData) {
@@ -14,5 +14,5 @@ func CharsCount(fileData []byte) (map[string]int, error) {
 		res[str]++
 	}
 
-	return res, nil
+	return res
 }

@@ -34,10 +34,7 @@ func TestHeader(t *testing.T) {
 	}
 	want := frame.String()
 
-	h, err := header.Header(charsTable, charCount)
-	if err != nil {
-		t.Fatalf("compose header: %s", err.Error())
-	}
+	h := header.Header(charsTable, charCount)
 
 	if want != h {
 		t.Fatalf("not equal, want: %s, header: %s\n", want, h)

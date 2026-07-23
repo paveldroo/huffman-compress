@@ -14,7 +14,7 @@ const (
 	CountBytes = 4
 )
 
-func Header(charsTable map[string]string, charCount uint32) (string, error) {
+func Header(charsTable map[string]string, charCount uint32) string {
 	b := bytes.Buffer{}
 
 	keys := slices.Sorted(maps.Keys(charsTable))
@@ -34,5 +34,5 @@ func Header(charsTable map[string]string, charCount uint32) (string, error) {
 		fmt.Fprintf(&res, "%08b", c)
 	}
 
-	return res.String(), nil
+	return res.String()
 }

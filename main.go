@@ -26,18 +26,12 @@ func main() {
 		log.Fatalf("get filedata: %s", err.Error()) //nolint:gosec // no injection
 	}
 
-	chars, err := counter.CharsCount(data)
-	if err != nil {
-		log.Fatalf("can't count chars: %s", err.Error()) //nolint:gosec // no injection
-	}
+	chars := counter.CharsCount(data)
 
 	t := tree.Tree(chars)
 	charsTable := codec.CharsCodes(&t)
 	charCount := uint32(utf8.RuneCount(data)) //nolint:gosec // fits file size
-	h, err := header.Header(charsTable, charCount)
-	if err != nil {
-		log.Fatalf("compose header: %s", err.Error()) //nolint:gosec
-	}
+	h := header.Header(charsTable, charCount)
 	encodedFileData, err := codec.Encode(h, data, charsTable)
 	if err != nil {
 		log.Fatalf("encoding failed: %s", err.Error()) //nolint:gosec

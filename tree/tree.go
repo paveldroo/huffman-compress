@@ -1,6 +1,7 @@
 package tree
 
 import (
+	"cmp"
 	"slices"
 )
 
@@ -58,15 +59,11 @@ func buildTree(nodes []Node) Node {
 
 func sortNodes(nodes []Node) []Node {
 	slices.SortFunc(nodes, func(a, b Node) int {
-		if a.Frequency == b.Frequency && a.Value < b.Value {
-			return -1
+		if c := cmp.Compare(a.Frequency, b.Frequency); c != 0 {
+			return c
 		}
 
-		if a.Frequency < b.Frequency {
-			return -1
-		}
-
-		return 1
+		return cmp.Compare(a.Value, b.Value)
 	})
 
 	return nodes

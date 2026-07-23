@@ -23,7 +23,7 @@ func TestHeader(t *testing.T) {
 	// sorted keys joined as key:!code:!
 	body := "a:!100001:!b:!0:!c:!10:!d:!01:!"
 
-	buf := make([]byte, header.LenBytes+header.CountBytes)
+	buf := make([]byte, header.LenBytes+header.CountBytes, header.LenBytes+header.CountBytes+len(body))
 	binary.BigEndian.PutUint32(buf[:header.LenBytes], uint32(len(body))) //nolint:gosec // test data
 	binary.BigEndian.PutUint32(buf[header.LenBytes:], charCount)
 	buf = append(buf, body...)

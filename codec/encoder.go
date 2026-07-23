@@ -12,10 +12,7 @@ import (
 
 const bitsCount = 8
 
-var (
-	errNoCode = errors.New("no code for char")
-	charsMap  = make(map[string]string) //nolint:gochecknoglobals // need global for algo
-)
+var errNoCode = errors.New("no code for char")
 
 func Encode(header string, data []byte, charsTable map[string]string) ([]byte, error) {
 	buf := bytes.Buffer{}
@@ -39,7 +36,7 @@ func Encode(header string, data []byte, charsTable map[string]string) ([]byte, e
 
 func ConvertToBytes(bitStr string) ([]byte, error) {
 	b := bytes.Buffer{}
-	for i := 0; i < len(bitStr)-1; i += bitsCount {
+	for i := 0; i < len(bitStr); i += bitsCount {
 		right := min(i+bitsCount, len(bitStr))
 
 		chunk := bitStr[i:right]
@@ -57,18 +54,19 @@ func ConvertToBytes(bitStr string) ([]byte, error) {
 }
 
 func CharsCodes(node *tree.Node) map[string]string {
-	traverseTree(node, "")
+	charsMap := make(map[string]string)
+	traverseTree(charsMap, node, "")
 
 	return charsMap
 }
 
-func traverseTree(node *tree.Node, curCode string) {
+func traverseTree(charsMap map[string]string, node *tree.Node, curCode string) {
 	left := node.Left
 	right := node.Right
 	if left != nil {
 		curCode += "0"
 		if left.Value == "" {
-			traverseTree(left, curCode)
+			traverseTree(charsMap, left, curCode)
 		} else {
 			charsMap[left.Value] = curCode
 		}
@@ -77,7 +75,7 @@ func traverseTree(node *tree.Node, curCode string) {
 	if right != nil {
 		curCode += "1"
 		if right.Value == "" {
-			traverseTree(right, curCode)
+			traverseTree(charsMap, right, curCode)
 		} else {
 			charsMap[right.Value] = curCode
 		}

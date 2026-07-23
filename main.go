@@ -23,7 +23,7 @@ func main() {
 
 	data, err := reader.FileData(fname)
 	if err != nil {
-		log.Fatal("get filedata: %w", err)
+		log.Fatalf("get filedata: %s", err.Error()) //nolint:gosec // no injection
 	}
 
 	chars, err := counter.CharsCount(data)

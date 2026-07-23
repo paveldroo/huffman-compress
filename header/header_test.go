@@ -2,6 +2,8 @@ package header_test
 
 import (
 	"encoding/binary"
+	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/paveldroo/huffman-compress/header"
@@ -16,15 +18,23 @@ func TestHeader(t *testing.T) {
 		"d": "01",
 	}
 
-	str := "000000000000000000000000000111110110000100111010001000010011000100110000001100000" +
-		"0110000001100000011000100111010001000010110001000111010001000010011000000111010001000010" +
-		"1100011001110100010000100110001001100000011101000100001011001000011101000100001001100000" +
-		"01100010011101000100001"
+	const charCount = 0
 
-	buf := make([]byte, header.LenBytes)
-	binary.BigEndian.PutUint32(buf, uint32(len(str))) //nolint:gosec // i'm pretty sure
-	want := string(buf) + str
-	h, err := header.Header(charsTable)
+	// sorted keys joined as key:!code:!
+	body := "a:!100001:!b:!0:!c:!10:!d:!01:!"
+
+	buf := make([]byte, header.LenBytes+header.CountBytes)
+	binary.BigEndian.PutUint32(buf[:header.LenBytes], uint32(len(body))) //nolint:gosec // test data
+	binary.BigEndian.PutUint32(buf[header.LenBytes:], charCount)
+	buf = append(buf, body...)
+
+	frame := strings.Builder{}
+	for _, c := range buf {
+		fmt.Fprintf(&frame, "%08b", c)
+	}
+	want := frame.String()
+
+	h, err := header.Header(charsTable, charCount)
 	if err != nil {
 		t.Fatalf("compose header: %s", err.Error())
 	}

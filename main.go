@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"unicode/utf8"
 
 	"github.com/paveldroo/huffman-compress/codec"
 	"github.com/paveldroo/huffman-compress/counter"
@@ -32,7 +33,8 @@ func main() {
 
 	t := tree.Tree(chars)
 	charsTable := codec.CharsCodes(&t)
-	h, err := header.Header(charsTable)
+	charCount := uint32(utf8.RuneCount(data)) //nolint:gosec // fits file size
+	h, err := header.Header(charsTable, charCount)
 	if err != nil {
 		log.Fatalf("compose header: %s", err.Error()) //nolint:gosec
 	}
@@ -56,7 +58,7 @@ func main() {
 		log.Fatalf("decode byte data to text: %s", err.Error())
 	}
 
-	err = os.WriteFile("../decoded_result", d, 0o600) //nolint:gosec,mnd
+	err = os.WriteFile("decoded_result", d, 0o600) //nolint:gosec,mnd
 	if err != nil {
 		log.Fatalf("write decoded_result file: %s", err.Error())
 	}

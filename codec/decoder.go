@@ -3,21 +3,23 @@ package codec
 import (
 	"encoding/binary"
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/paveldroo/huffman-compress/header"
 )
 
+const headerStart = header.LenBytes + header.CountBytes
+
 func Decode(data []byte) ([]byte, error) {
 	headerLen := binary.BigEndian.Uint32(data[:header.LenBytes])
+	charCount := binary.BigEndian.Uint32(data[header.LenBytes:headerStart])
 
-	h := data[header.LenBytes : header.LenBytes+headerLen]
+	h := data[headerStart : headerStart+headerLen]
 	codesTable := codesTableFromBytes(h)
 
-	fdataBytes := data[header.LenBytes+headerLen:]
+	fdataBytes := data[headerStart+headerLen:]
 
-	return []byte(decodedData(fdataBytes, codesTable)), nil
+	return []byte(decodedData(fdataBytes, codesTable, charCount)), nil
 }
 
 func codesTableFromBytes(data []byte) map[string]string {
@@ -30,29 +32,28 @@ func codesTableFromBytes(data []byte) map[string]string {
 	return res
 }
 
-func decodedData(data []byte, codesTable map[string]string) string {
-	fdataBinaryStr := strings.Builder{}
-
-	for _, c := range data {
-		fmt.Fprintf(&fdataBinaryStr, "%08b", c)
-		// fmt.Println(fdataBinaryStr.String())
+func decodedData(data []byte, codesTable map[string]string, charCount uint32) string {
+	bits := strings.Builder{}
+	for _, by := range data {
+		fmt.Fprintf(&bits, "%08b", by)
 	}
 
 	b := strings.Builder{}
+	cur := strings.Builder{}
 
-	cur := ""
+	var emitted uint32
+	for _, bit := range bits.String() {
+		cur.WriteRune(bit)
 
-	for _, el := range fdataBinaryStr.String() {
-		cur += string(el)
-		if ch, ok := codesTable[cur]; ok {
+		if ch, ok := codesTable[cur.String()]; ok {
 			b.WriteString(ch)
-			cur = ""
-		}
-	}
+			cur.Reset()
 
-	err := os.WriteFile("../decoded_result", []byte(b.String()), 0o600) //nolint:mnd // permissions code
-	if err != nil {
-		panic("can't write a decoded file")
+			emitted++
+			if emitted == charCount {
+				return b.String()
+			}
+		}
 	}
 
 	return b.String()

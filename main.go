@@ -34,15 +34,31 @@ func main() {
 	charsTable := codec.CharsCodes(&t)
 	h, err := header.Header(charsTable)
 	if err != nil {
-		log.Fatalf("compose header: %s", err.Error())
+		log.Fatalf("compose header: %s", err.Error()) //nolint:gosec
 	}
 	encodedFileData, err := codec.Encode(h, data, charsTable)
 	if err != nil {
 		log.Fatalf("encoding failed: %s", err.Error()) //nolint:gosec
 	}
 
-	err = os.WriteFile("result", encodedFileData, 0o600) //nolint:gosec,mnd
+	err = os.WriteFile("encoded_result", encodedFileData, 0o600) //nolint:gosec,mnd
 	if err != nil {
 		log.Fatalf("write file: %s", err.Error()) //nolint:gosec
 	}
+
+	data, err = os.ReadFile("encoded_result")
+	if err != nil {
+		log.Fatalf("read encoded_result file: %s", err.Error())
+	}
+
+	d, err := codec.Decode(data)
+	if err != nil {
+		log.Fatalf("decode byte data to text: %s", err.Error())
+	}
+
+	err = os.WriteFile("../decoded_result", d, 0o600) //nolint:gosec,mnd
+	if err != nil {
+		log.Fatalf("write decoded_result file: %s", err.Error())
+	}
+	log.Println("decoded_result successfully created!")
 }

@@ -5,9 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/paveldroo/huffman-compress/tree"
 )
+
+const bitsCount = 8
 
 var (
 	errNoCode = errors.New("no code for char")
@@ -35,27 +38,19 @@ func Encode(header string, data []byte, charsTable map[string]string) ([]byte, e
 }
 
 func ConvertToBytes(bitStr string) ([]byte, error) {
-	bitsLen := (len(bitStr) + 7) / 8
-
 	b := bytes.Buffer{}
-	lastIdx := 0
-	for range bitsLen {
-		right := lastIdx + 8
-		if right >= len(bitStr) {
-			right = len(bitStr) - 1
-		}
+	for i := 0; i < len(bitStr)-1; i += bitsCount {
+		right := min(i+bitsCount, len(bitStr))
 
-		if lastIdx == right {
-			continue
+		chunk := bitStr[i:right]
+		if len(chunk) < bitsCount {
+			chunk += strings.Repeat("0", bitsCount-len(chunk))
 		}
-
-		oneBitStr := bitStr[lastIdx:right]
-		byteToAdd, err := strconv.ParseUint(oneBitStr, 2, 8)
+		v, err := strconv.ParseUint(chunk, 2, bitsCount)
 		if err != nil {
 			return nil, fmt.Errorf("convert bit string to byte: %w", err)
 		}
-		b.WriteByte(byte(byteToAdd))
-		lastIdx = lastIdx + 8
+		b.WriteByte(byte(v))
 	}
 
 	return b.Bytes(), nil
